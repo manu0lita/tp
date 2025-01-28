@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe Animation</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .starfield {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 1s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .spaceship {
+            position: absolute;
+            width: 50px;
+            height: 30px;
+            background-color: red;
+            clip-path: polygon(0 100%, 50% 0%, 100% 100%);
+            bottom: 10px;
+            animation: moveSpaceship 5s linear infinite;
+        }
+
+        @keyframes moveSpaceship {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(-10px) translateX(100vw); }
+        }
+
+        .saturn {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e2/Saturn.png');
+            background-size: cover;
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ring {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border: 10px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            top: -20px;
+            left: -20px;
+            animation: rotateRing 10s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10; /* Ensure text is above stars */
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005f99;
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield" id="starfield"></div>
+    <div class="container">
+        <h1>Universe Fact</h1>
+        <p id="fact"></p>
+        <button id="nextFact">Next Fact</button>
+    </div>
+    <div class="saturn" id="saturn"></div>
+    <div class="ring"></div>
+    <script>
+        const facts = [
+            "The observable universe is about 93 billion light-years in diameter. However, the entire universe could be much larger, possibly infinite.",
+            "The universe is approximately 13.8 billion years old, based on measurements of the cosmic microwave background radiation.",
+            "There are estimated to be over 2 trillion galaxies in the observable universe, each containing millions to trillions of stars.",
+            "About 27% of the universe is made up of dark matter, which does not emit light or energy, while approximately 68% is dark energy, a mysterious force driving the accelerated expansion of the universe.",
+            "The universe has been expanding since the Big Bang, and galaxies are moving away from each other. The farther away a galaxy is, the faster it appears to be moving away.",
+            "Black holes are regions in space where gravity is so strong that nothing, not even light, can escape from them.",
+            "Neutron stars are incredibly dense remnants of supernova explosions. A sugar-cube-sized amount of neutron-star material would weigh about as much as all of humanity combined.",
+            "Thousands of exoplanets (planets outside our solar system) have been discovered, with some located in the 'habitable zone' where conditions might be right for life.",
+            "The cosmic microwave background radiation is the afterglow of the Big Bang, providing a snapshot of the universe when it was just 380,000 years old.",
+            "Some theories suggest that our universe might be just one of many universes in a 'multiverse,' each with its own laws of physics and properties."
+        ];
+
+        let currentFactIndex = 0;
+
+        function displayFact() {
+            document.getElementById('fact').innerText = facts[currentFactIndex];
+        }
+
+        document.getElementById('nextFact').addEventListener('click', () => {
+            currentFactIndex = (currentFactIndex + 1) % facts.length;
+            displayFact();
+        });
+
+        // Function to create stars
+        function createStars() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3 + 1; // Random size between 1 and 4
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}vh`; // Random vertical position
+                star.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+                starfield.appendChild(star);
+            }
+        }
+
+        // Function to create spaceships
+        function createSpaceships() {
+            const starfield = document.getElementById('starfield');
+            setInterval(() => {
+                const spaceship = document.createElement('div');
+                spaceship.classList.add('spaceship');
+                spaceship.style.bottom = `${Math.random() * 100}px`; // Random vertical position
+                spaceship.style.left = `-50px`; // Start off-screen
+                starfield.appendChild(spaceship);
+
+                // Animate spaceship
+                spaceship.animate([
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(100vw)' }
+                ], {
+                    duration: 5000,
+                    easing: 'linear',
+                    fill: 'forwards'
+                });
+
+                // Remove spaceship after animation
+                setTimeout(() => {
+                    spaceship.remove();
+                }, 5000);
+            }, 2000); // Create a new spaceship every 2 seconds
+        }
+
+        // Create stars and spaceships on load
+        createStars();
+        createSpaceships();
+
+        // Display the first fact on page load
+        displayFact();
+    </script>
+</body>
+</html>
